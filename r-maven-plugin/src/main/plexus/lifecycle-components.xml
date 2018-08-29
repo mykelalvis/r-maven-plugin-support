@@ -1,0 +1,138 @@
+<!--
+
+Copyright (C) 2015 Cotiviti Labs (nexgen.admin@cotiviti.io)
+
+The software code contained herein is the property of Cotiviti Corporation
+and its subsidiaries and affiliates (collectively, “Cotiviti”).
+Access to this software code is being provided to you in the course of your
+employment or affiliation with Cotiviti and may be used solely in the scope
+and course of your work for Cotiviti, and is for internal Cotiviti use only.
+Any unauthorized use, disclosure, copying, distribution, destruction of this
+software code, or the taking of any unauthorized action in reliance on this
+software code, is strictly prohibited.
+If this information is viewed in error, immediately discontinue use of the
+application.  Anyone using this software code and the applications will be
+subject to monitoring for improper use, system maintenance and security
+purposes, and is advised that if such monitoring reveals possible criminal
+activity or policy violation, Cotiviti personnel may provide the evidence of
+such monitoring to law enforcement or other officials, and the user may be
+subject to disciplinary action by Cotiviti, up to and including termination
+of employment.
+
+Use of this software code and any applications and information therein
+constitutes acknowledgement of and consent to this notice
+
+-->
+<componentSet>
+  <components>
+    <component>
+      <role>org.codehaus.plexus.archiver.UnArchiver</role>
+      <role-hint>packer</role-hint>
+      <implementation>org.codehaus.plexus.archiver.zip.ZipUnArchiver
+      </implementation>
+      <description>Plexus Archiver that unpackages packer archives
+      </description>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+    </component>
+    <component>
+      <role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+      <role-hint>r</role-hint>
+      <implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler
+      </implementation>
+      <configuration>
+        <type>r</type>
+        <extension>zip</extension>
+        <language>none</language>
+        <addedToClasspath>false</addedToClasspath>
+      </configuration>
+    </component>
+    <component>
+      <role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+      <role-hint>r</role-hint>
+      <implementation>
+        org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping
+      </implementation>
+      <configuration>
+        <lifecycles
+          xmlns="http://maven.apache.org/LIFECYCLE/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/LIFECYCLE/1.0.0 http://maven.apache.org/xsd/lifecycle-1.0.0.xsd">
+          <lifecycle>
+            <id>default</id>
+            <phases>
+              <process-resources>
+                org.apache.maven.plugins:maven-resources-plugin:resources
+              </process-resources>
+              <process-test-resources>
+                org.apache.maven.plugins:maven-resources-plugin:testResources
+              </process-test-resources>
+              <test-compile>
+                ${project.groupId}:${project.artifactId}:r-test-compile
+              </test-compile>
+              <test>
+                ${project.groupId}:${project.artifactId}:r-test
+              </test>
+              <package>
+                ${project.groupId}:${project.artifactId}:r-package
+              </package>
+              <install>
+                ${project.groupId}:${project.artifactId}:r-install
+              </install>
+              <deploy>
+                ${project.groupId}:${project.artifactId}:r-deploy
+              </deploy>
+            </phases>
+          </lifecycle>
+        </lifecycles>
+      </configuration>
+    </component>
+    <component>
+      <role>org.apache.maven.lifecycle.mapping.LifecycleMapping</role>
+      <role-hint>cmar</role-hint>
+      <implementation>
+        org.apache.maven.lifecycle.mapping.DefaultLifecycleMapping
+      </implementation>
+      <configuration>
+        <lifecycles
+          xmlns="http://maven.apache.org/LIFECYCLE/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/LIFECYCLE/1.0.0 http://maven.apache.org/xsd/lifecycle-1.0.0.xsd">
+          <lifecycle>
+            <id>default</id>
+            <phases>
+              <process-resources>
+                org.apache.maven.plugins:maven-resources-plugin:resources
+              </process-resources>
+              <compile>
+                ${project.groupId}:${project.artifactId}:compile
+              </compile>
+              <process-test-resources>
+                org.apache.maven.plugins:maven-resources-plugin:testResources
+              </process-test-resources>
+              <test-compile>
+                org.apache.maven.plugins:maven-compiler-plugin:testCompile
+              </test-compile>
+              <test>
+                org.apache.maven.plugins:maven-surefire-plugin:test
+              </test>
+              <package>
+                ${project.groupId}:${project.artifactId}:package
+              </package>
+              <install>
+                org.apache.maven.plugins:maven-install-plugin:install
+              </install>
+              <deploy>
+                org.apache.maven.plugins:maven-deploy-plugin:deploy
+              </deploy>
+            </phases>
+          </lifecycle>
+        </lifecycles>
+        <extension>cmar</extension>
+        <language>java</language>
+        <addedToClasspath>false</addedToClasspath>
+
+      </configuration>
+    </component>
+
+  </components>
+</componentSet>

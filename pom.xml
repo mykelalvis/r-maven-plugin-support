@@ -1,0 +1,173 @@
+<!--
+
+    Copyright (C) 2015 Cotiviti Labs (nexgen.admin@cotiviti.io)
+
+    The software code contained herein is the property of Cotiviti Corporation
+    and its subsidiaries and affiliates (collectively, “Cotiviti”).
+    Access to this software code is being provided to you in the course of your
+    employment or affiliation with Cotiviti and may be used solely in the scope
+    and course of your work for Cotiviti, and is for internal Cotiviti use only.
+    Any unauthorized use, disclosure, copying, distribution, destruction of this
+    software code, or the taking of any unauthorized action in reliance on this
+    software code, is strictly prohibited.
+    If this information is viewed in error, immediately discontinue use of the
+    application.  Anyone using this software code and the applications will be
+    subject to monitoring for improper use, system maintenance and security
+    purposes, and is advised that if such monitoring reveals possible criminal
+    activity or policy violation, Cotiviti personnel may provide the evidence of
+    such monitoring to law enforcement or other officials, and the user may be
+    subject to disciplinary action by Cotiviti, up to and including termination
+    of employment.
+
+    Use of this software code and any applications and information therein
+    constitutes acknowledgement of and consent to this notice
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.cotiviti</groupId>
+    <artifactId>cotiviti-labs-parent</artifactId>
+    <version>17</version>
+  </parent>
+  <groupId>io.cotiviti.r</groupId>
+  <artifactId>r-maven-plugin-support</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>${project.artifactId}</name>
+  <inceptionYear>2018</inceptionYear>
+  <description>A set oflibraries and plugins to support the use of R Packaging</description>
+  <url>${cotiviti.site.view.url}</url>
+  <scm>
+    <connection>scm:git:${git.url}</connection>
+    <url>scm:git:${git.url}</url>
+    <developerConnection>scm:git:${git.url}</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+  <distributionManagement>
+    <site>
+      <id>nexus</id>
+      <name>Internal Server</name>
+      <url>dav:${cotiviti.site.view.url}</url>
+    </site>
+  </distributionManagement>
+  <properties>
+    <cotiviti.site.path>${project.groupId}/${project.artifactId}/${project.version}</cotiviti.site.path>
+  </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.cotiviti.util</groupId>
+        <artifactId>cotiviti-core-import-pom</artifactId>
+        <version>7.3.0.0</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>r-component</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>r-component</artifactId>
+        <version>${project.version}</version>
+        <type>test-jar</type>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>packer-test-fixtures</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.skyscreamer</groupId>
+        <artifactId>jsonassert</artifactId>
+        <version>${jsonassert.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>com.vaadin.external.google</groupId>
+            <artifactId>android-json</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jooq</groupId>
+      <artifactId>joor-java-8</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>io.cotiviti.automation</groupId>
+          <artifactId>r-maven-plugin</artifactId>
+          <version>${project.version}</version>
+          <extensions>true</extensions>
+          <dependencies>
+          </dependencies>
+          <configuration>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <systemPropertyVariables>
+              <target_dir>${project.build.directory}</target_dir>
+            </systemPropertyVariables>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>io.cotiviti.util.maven</groupId>
+          <artifactId>cotiviti-versioning-generator-maven-plugin</artifactId>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>${maven.plugin.plugin.version}</version>
+          <configuration>
+            <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+          </configuration>
+          <executions>
+            <execution>
+              <id>mojo-descriptor</id>
+              <phase>process-classes</phase>
+              <goals>
+                <goal>descriptor</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+
+  <!-- To download the packer binary based on OS. Assuming only 64 bit will be used -->
+  <modules>
+    <module>r-component</module>
+    <module>r-maven-plugin</module>
+  </modules>
+</project>

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2015 Cotiviti Labs (nexgen.admin@cotiviti.io)
+
+    The software code contained herein is the property of Cotiviti Corporation
+    and its subsidiaries and affiliates (collectively, “Cotiviti”).
+    Access to this software code is being provided to you in the course of your
+    employment or affiliation with Cotiviti and may be used solely in the scope
+    and course of your work for Cotiviti, and is for internal Cotiviti use only.
+    Any unauthorized use, disclosure, copying, distribution, destruction of this
+    software code, or the taking of any unauthorized action in reliance on this
+    software code, is strictly prohibited.
+    If this information is viewed in error, immediately discontinue use of the
+    application.  Anyone using this software code and the applications will be
+    subject to monitoring for improper use, system maintenance and security
+    purposes, and is advised that if such monitoring reveals possible criminal
+    activity or policy violation, Cotiviti personnel may provide the evidence of
+    such monitoring to law enforcement or other officials, and the user may be
+    subject to disciplinary action by Cotiviti, up to and including termination
+    of employment.
+
+    Use of this software code and any applications and information therein
+    constitutes acknowledgement of and consent to this notice
+
+-->
+<!-- Copyright (C) 2015 Cotiviti Labs (nexgen.admin@cotiviti.io) The software 
+	code contained herein is the property of Cotiviti Corporation and its subsidiaries 
+	and affiliates (collectively, “Cotiviti”). Access to this software code is 
+	being provided to you in the course of your employment or affiliation with 
+	Cotiviti and may be used solely in the scope and course of your work for 
+	Cotiviti, and is for internal Cotiviti use only. Any unauthorized use, disclosure, 
+	copying, distribution, destruction of this software code, or the taking of 
+	any unauthorized action in reliance on this software code, is strictly prohibited. 
+	If this information is viewed in error, immediately discontinue use of the 
+	application. Anyone using this software code and the applications will be 
+	subject to monitoring for improper use, system maintenance and security purposes, 
+	and is advised that if such monitoring reveals possible criminal activity 
+	or policy violation, Cotiviti personnel may provide the evidence of such 
+	monitoring to law enforcement or other officials, and the user may be subject 
+	to disciplinary action by Cotiviti, up to and including termination of employment. 
+	Use of this software code and any applications and information therein constitutes 
+	acknowledgement of and consent to this notice -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		  <groupId>io.cotiviti.r</groupId>
+  <artifactId>r-maven-plugin-support</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>r-component</artifactId>
+	<packaging>jar</packaging>
+	<name>${project.artifactId}</name>
+	<description>Testable code to manipulate R packages</description>
+	<properties>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>io.cotiviti</groupId>
+			<artifactId>cotiviti-executor</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.cotiviti</groupId>
+			<artifactId>cotiviti-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jool-java-8</artifactId>
+			<version>0.9.13</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-container-default</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-component-annotations</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-archiver</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq</artifactId>
+			<version>3.10.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>joor-java-8</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.cotiviti.util</groupId>
+			<artifactId>cotiviti-logconfig</artifactId>
+			<version>1.0.4</version>
+			<classifier>debug</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<!-- Needed for JSONObject equals -->
+			<groupId>org.skyscreamer</groupId>
+			<artifactId>jsonassert</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>com.vaadin.external.google</groupId>
+					<artifactId>android-json</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-plexus-filtered-resources</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/extra-resources</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/plexus</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.plexus</groupId>
+				<artifactId>plexus-component-metadata</artifactId>
+				<executions>
+					<execution>
+						<id>generate-plexus-metadata</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>generate-metadata</goal>
+						</goals>
+						<configuration>
+							<intermediaryMetadata>${project.build.directory}/intermediate.xml</intermediaryMetadata>
+						</configuration>
+					</execution>
+					<execution>
+						<id>merge-plexus-metadata</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>merge-metadata</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>${project.build.directory}/intermediate.xml</descriptor>
+								<descriptor>${project.build.directory}/extra-resources/r-components.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate-plexus-test-metadata</id>
+						<phase>process-test-classes</phase>
+						<goals>
+							<goal>generate-test-metadata</goal>
+						</goals>
+						<configuration>
+							<intermediaryMetadata>${project.build.directory}/intermediate.xml</intermediaryMetadata>
+						</configuration>
+					</execution>
+					<execution>
+						<id>merge-plexus-test-metadata</id>
+						<phase>process-test-classes</phase>
+						<goals>
+							<goal>merge-metadata</goal>
+						</goals>
+						<configuration>
+							<descriptors>
+								<descriptor>${project.build.directory}/intermediate.xml</descriptor>
+								<descriptor>${project.build.directory}/extra-resources/packer-components.xml</descriptor>
+							</descriptors>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>
